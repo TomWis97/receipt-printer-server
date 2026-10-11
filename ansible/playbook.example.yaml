@@ -6,8 +6,6 @@
   roles:
     - role: receipt_printer_server
       vars:
-        receipt_printer_server_repo: https://github.com/<you>/receipt-printer-server.git
-        receipt_printer_server_driver_repo: https://github.com/<you>/lib-epson-tm-t88v.git
         receipt_printer_server_template_settings:
           shopping-receipt:
             payee: J. Jansen

@@ -312,8 +312,8 @@ into a virtualenv at `/opt/receipt-printer-server/venv`, writes
 
 | Variable | Default |
 |---|---|
-| `receipt_printer_server_repo` | **required**, git URL of this repository |
-| `receipt_printer_server_driver_repo` | **required**, git URL of the driver |
+| `receipt_printer_server_repo` | `https://github.com/TomWis97/receipt-printer-server.git` |
+| `receipt_printer_server_driver_repo` | `https://github.com/TomWis97/lib-epson-tm-t88v.git` |
 | `receipt_printer_server_version`, `…_driver_version` | `main` |
 | `receipt_printer_server_templates_dir` | the `templates/` directory of the checkout |
 | `receipt_printer_server_template_settings` | `{}` |

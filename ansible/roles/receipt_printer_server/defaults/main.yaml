@@ -1,8 +1,8 @@
 ---
 # Where the code comes from. Both are git repositories, cloned on the target.
-# Required, no default:
-#   receipt_printer_server_repo: https://github.com/<you>/receipt-printer-server.git
-#   receipt_printer_server_driver_repo: https://github.com/<you>/lib-epson-tm-t88v.git
+# They are public, so HTTPS needs no credentials on the target.
+receipt_printer_server_repo: https://github.com/TomWis97/receipt-printer-server.git
+receipt_printer_server_driver_repo: https://github.com/TomWis97/lib-epson-tm-t88v.git
 receipt_printer_server_version: main
 receipt_printer_server_driver_version: main
 
