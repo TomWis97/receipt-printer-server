@@ -1,0 +1,21 @@
+# {{ ansible_managed }}
+[Unit]
+Description=Receipt printer server
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+User={{ receipt_printer_server_user }}
+Group={{ receipt_printer_server_user }}
+SupplementaryGroups=lp
+ExecStart={{ receipt_printer_server_install_dir }}/venv/bin/receipt-printer-server --config {{ receipt_printer_server_config_dir }}/config.yaml
+Restart=on-failure
+RestartSec=5
+
+NoNewPrivileges=yes
+ProtectSystem=full
+ProtectHome=yes
+PrivateTmp=yes
+
+[Install]
+WantedBy=multi-user.target

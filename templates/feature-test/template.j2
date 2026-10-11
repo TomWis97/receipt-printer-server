@@ -1,0 +1,74 @@
+<center><big><b>FEATURE TEST</b></big>
+{{ now().strftime("%Y-%m-%d %H:%M:%S") }}
+</center>
+<rule char="="/>
+<b>Styles</b>
+Normal <b>bold</b> <u>underline</u> <style underline="double">double</style>
+<invert> inverted </invert> <style double-strike="true">double-strike</style>
+<small>Font B is smaller: 56 characters fit on one line here.</small>
+<wide>Wide</wide> <tall>Tall</tall> <big>Big</big>
+<style width="3" height="3">3x3</style><style width="4" height="2">4x2</style>
+<style smoothing="true" width="4" height="4">Smooth</style>
+<left>Left</left>
+<center>Center</center>
+<right>Right</right>
+<style upside-down="true">Upside down</style>
+<style rotate="true">Rotated 90: reads bottom to top</style>
+<vertical>Vertical: turn the receipt a quarter counter-clockwise and this reads top to bottom, in columns from left to right.</vertical>
+<red>Colour 2 (black on mono paper)</red>
+<rule/>
+<b>Characters</b> (tables picked automatically)
+€ 12,50  £ ¥ ¢ ° ± ½ ¼ µ ß
+äöü ÄÖÜ éèêë çñ åæø ÅÆØ
+Łódź ŻÓŁĆ čšž ő ű   ğış ĞİŞ
+Привет  {{ "smile 😀" | printable }}
+<rule/>
+<b>Columns</b>
+<row><cell>Default: first cell takes the rest</cell><cell>1,00</cell></row>
+<row widths="14,14,14"><cell>Fixed</cell><cell>widths</cell><cell>right</cell></row>
+<row><cell>A long first cell wraps onto a second line instead of being cut off</cell><cell>99,99</cell></row>
+<rule/>
+<b>Spacing and margins</b>
+<spacing line="60">Line spacing 60 dots, baseline to baseline:
+36 dots of white above this line (normal: 6)</spacing>
+<spacing line="24">
+████████████████ Line spacing 24:
+████████████████ one solid block
+</spacing>
+<spacing char="6">Character spacing</spacing>
+<margins left="120" width="272">This paragraph is printed with a left margin of 120 dots and a width of 272 dots, so it wraps early.
+</margins>
+After the margins.
+<rule/>
+<b>Page mode</b>
+<page height="120">
+<at x="0" y="24"/>top left
+<at x="404" y="24"/>top right
+<at x="220" y="72"/><b>middle</b>
+<at x="0" y="120"/>bottom left
+<at x="368" y="120"/>bottom right
+</page>
+<rule/>
+<b>1-D barcodes</b>
+<barcode type="ean13">400638133393</barcode>
+<barcode type="code128" hri="above" height="40">{BHello 123</barcode>
+<barcode type="gs1-128" module-width="2">(01)12345678901231</barcode>
+<rule/>
+<b>2-D codes</b>
+<qr module="5" error-correction="h">https://example.com/feature-test</qr>
+<pdf417 module-width="2">PDF417 from receipt-printer-server</pdf417>
+<maxicode mode="4">MaxiCode test</maxicode>
+<rule/>
+<b>Images</b>
+Dithered:
+<image src="gradient.png"/>
+Threshold, scaled to 200 dots, left aligned:
+<image src="gradient.png" dither="false" width="200" align="left"/>
+Inverted:
+<image src="gradient.png" invert="true"/>
+{% if photo %}
+<image src="{{ photo }}"/>
+{% endif %}
+<rule char="="/>
+<center>end of feature test</center>
+<cut/>

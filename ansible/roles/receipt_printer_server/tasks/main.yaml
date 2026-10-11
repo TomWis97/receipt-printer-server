@@ -1,0 +1,92 @@
+---
+- name: Install packages
+  ansible.builtin.package:
+    name: "{{ receipt_printer_server_packages }}"
+    state: present
+
+- name: Create the service user
+  ansible.builtin.user:
+    name: "{{ receipt_printer_server_user }}"
+    system: true
+    # The usblp device node belongs to the lp group.
+    groups: lp
+    append: true
+    shell: /usr/sbin/nologin
+    create_home: false
+
+- name: Check out the printer driver
+  ansible.builtin.git:
+    repo: "{{ receipt_printer_server_driver_repo }}"
+    dest: "{{ receipt_printer_server_install_dir }}/src/driver"
+    version: "{{ receipt_printer_server_driver_version }}"
+  register: receipt_printer_server_driver_checkout
+  notify: Restart receipt-printer-server
+
+- name: Check out the server
+  ansible.builtin.git:
+    repo: "{{ receipt_printer_server_repo }}"
+    dest: "{{ receipt_printer_server_install_dir }}/src/server"
+    version: "{{ receipt_printer_server_version }}"
+  register: receipt_printer_server_checkout
+  notify:
+    - Check the templates
+    - Restart receipt-printer-server
+
+- name: Install the driver and server into a virtualenv
+  ansible.builtin.pip:
+    name:
+      - "{{ receipt_printer_server_install_dir }}/src/driver"
+      - "{{ receipt_printer_server_install_dir }}/src/server"
+    virtualenv: "{{ receipt_printer_server_install_dir }}/venv"
+    virtualenv_command: python3 -m venv
+    # pip does not notice a new commit when the version number stays the
+    # same, so reinstall whenever a checkout changed.
+    state: >-
+      {{ 'forcereinstall'
+         if receipt_printer_server_driver_checkout.changed or receipt_printer_server_checkout.changed
+         else 'present' }}
+  notify: Restart receipt-printer-server
+
+- name: Create the configuration directory
+  ansible.builtin.file:
+    path: "{{ receipt_printer_server_config_dir }}"
+    state: directory
+    owner: root
+    group: "{{ receipt_printer_server_user }}"
+    mode: "0750"
+
+- name: Write the configuration
+  ansible.builtin.template:
+    src: config.yaml.j2
+    dest: "{{ receipt_printer_server_config_dir }}/config.yaml"
+    owner: root
+    group: "{{ receipt_printer_server_user }}"
+    mode: "0640"
+    # Loads the configuration and every template, and refuses a broken one.
+    validate: "{{ receipt_printer_server_install_dir }}/venv/bin/receipt-printer-server --check --config %s"
+  notify: Restart receipt-printer-server
+
+- name: Install the systemd unit
+  ansible.builtin.template:
+    src: receipt-printer-server.service.j2
+    dest: /etc/systemd/system/receipt-printer-server.service
+    owner: root
+    group: root
+    mode: "0644"
+  notify: Restart receipt-printer-server
+
+- name: Open the port in firewalld
+  ansible.posix.firewalld:
+    port: "{{ receipt_printer_server_port }}/tcp"
+    zone: "{{ receipt_printer_server_firewalld_zone | default(omit) }}"
+    permanent: true
+    immediate: true
+    state: enabled
+  when: receipt_printer_server_firewalld | bool
+
+- name: Enable and start the service
+  ansible.builtin.systemd_service:
+    name: receipt-printer-server
+    enabled: true
+    state: started
+    daemon_reload: true

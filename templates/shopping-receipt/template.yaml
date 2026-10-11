@@ -1,0 +1,36 @@
+title: Shopping receipt
+description: >-
+  A list of items with their subtotals, the grand total, and a QR code that
+  banking apps can scan to pay it (an EPC "GiroCode"). The QR code is only
+  printed when an IBAN is configured.
+
+fields:
+  - name: shop
+    label: Shop name
+    default: Receipt
+    max_length: 21   # one line at double width
+  - name: items
+    type: list
+    min_items: 1
+    fields:
+      - name: amount
+        type: integer
+        default: 1
+        min: 1
+      - name: description
+        required: true
+      - name: subtotal
+        type: number
+        required: true
+        min: 0
+  - name: reference
+    label: Payment description
+    help: Shown on the payer's bank statement.
+    max_length: 140
+
+# Defaults; override them under template_settings in the server config.
+settings:
+  payee: ""      # name of the account holder
+  iban: ""       # leave empty to print no QR code
+  bic: ""        # optional within the EEA
+  currency: "€"

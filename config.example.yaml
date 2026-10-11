@@ -1,0 +1,24 @@
+# receipt-printer-server configuration.
+# Run `receipt-printer-server --check --config <this file>` to validate it.
+
+host: 0.0.0.0
+port: 8080
+
+# Directory holding one subdirectory per template. A relative path is
+# relative to this file.
+templates: templates
+
+printer:
+  # The usblp device node. Leave out to use the first /dev/usb/lp* found.
+  device: /dev/usb/lp0
+  # 80mm or 58mm.
+  paper: 80mm
+  # true renders and checks every job but sends nothing to the printer.
+  dry_run: false
+
+# Settings handed to each template as `settings`, by template name. They
+# override the defaults under `settings:` in the template's own template.yaml.
+template_settings:
+  shopping-receipt:
+    payee: J. Jansen
+    iban: NL91 ABNA 0417 1643 00

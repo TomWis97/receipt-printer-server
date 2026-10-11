@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "receipt-printer-server"
+version = "0.1.0"
+description = "REST API and web UI that prints Jinja2 templates on an Epson TM-T88V"
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+dependencies = [
+    "epson-tm-t88v",
+    "flask",
+    "pillow",
+    "pyyaml",
+    "requests",
+    "waitress",
+]
+
+[project.optional-dependencies]
+test = ["pytest"]
+
+[project.scripts]
+receipt-printer-server = "receipt_printer_server.__main__:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+receipt_printer_server = ["static/*"]

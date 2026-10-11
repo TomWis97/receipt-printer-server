@@ -1,0 +1,11 @@
+title: Log line
+description: >-
+  Prints one line, prefixed with the current date and time. Made for logging
+  measurements from Home Assistant: it neither feeds nor cuts, so the lines
+  stack up on the roll.
+
+fields:
+  - name: message
+    type: string
+    required: true
+    help: For example "Living room 21.3 °C".

@@ -1,0 +1,19 @@
+---
+# Handlers run in the order listed here, so a broken template stops the play
+# before the service is restarted with it.
+- name: Check the templates
+  # No module runs a program's own validation. The config task's validate:
+  # covers configuration changes; this covers template changes from git.
+  ansible.builtin.command:
+    argv:
+      - "{{ receipt_printer_server_install_dir }}/venv/bin/receipt-printer-server"
+      - --check
+      - --config
+      - "{{ receipt_printer_server_config_dir }}/config.yaml"
+  changed_when: false
+
+- name: Restart receipt-printer-server
+  ansible.builtin.systemd_service:
+    name: receipt-printer-server
+    state: restarted
+    daemon_reload: true

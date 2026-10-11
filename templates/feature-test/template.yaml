@@ -1,0 +1,9 @@
+title: Feature test
+description: >-
+  Prints one of everything the print markup supports. Useful to check the
+  printer, and as a reference when writing templates.
+
+fields:
+  - name: photo
+    type: image
+    help: Optional; printed at the end, dithered.

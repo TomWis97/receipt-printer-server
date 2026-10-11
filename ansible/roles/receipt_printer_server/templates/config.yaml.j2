@@ -1,0 +1,12 @@
+# {{ ansible_managed }}
+host: {{ receipt_printer_server_host | to_json }}
+port: {{ receipt_printer_server_port | int }}
+templates: {{ receipt_printer_server_templates_dir | to_json }}
+
+printer:
+  device: {{ receipt_printer_server_printer_device | to_json }}
+  paper: {{ receipt_printer_server_printer_paper | to_json }}
+  dry_run: {{ receipt_printer_server_printer_dry_run | bool | to_json }}
+
+template_settings:
+  {{ receipt_printer_server_template_settings | to_nice_yaml(indent=2) | indent(2) }}

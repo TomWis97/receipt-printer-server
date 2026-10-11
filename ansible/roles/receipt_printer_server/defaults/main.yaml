@@ -1,0 +1,37 @@
+---
+# Where the code comes from. Both are git repositories, cloned on the target.
+# Required, no default:
+#   receipt_printer_server_repo: https://github.com/<you>/receipt-printer-server.git
+#   receipt_printer_server_driver_repo: https://github.com/<you>/lib-epson-tm-t88v.git
+receipt_printer_server_version: main
+receipt_printer_server_driver_version: main
+
+# git and a Python 3 with venv. These are the AlmaLinux / EL names; Debian
+# would need git and python3-venv.
+receipt_printer_server_packages:
+  - git-core
+  - python3
+
+# Open receipt_printer_server_port in firewalld. Set
+# receipt_printer_server_firewalld_zone to use a zone other than the default.
+receipt_printer_server_firewalld: true
+
+receipt_printer_server_user: receipt-printer
+receipt_printer_server_install_dir: /opt/receipt-printer-server
+receipt_printer_server_config_dir: /etc/receipt-printer-server
+
+receipt_printer_server_host: 0.0.0.0
+receipt_printer_server_port: 8080
+
+# The templates directory. The default is the one in the server repository.
+receipt_printer_server_templates_dir: "{{ receipt_printer_server_install_dir }}/src/server/templates"
+
+receipt_printer_server_printer_device: /dev/usb/lp0
+receipt_printer_server_printer_paper: 80mm
+receipt_printer_server_printer_dry_run: false
+
+# Settings per template, e.g.:
+#   shopping-receipt:
+#     payee: J. Jansen
+#     iban: NL91 ABNA 0417 1643 00
+receipt_printer_server_template_settings: {}

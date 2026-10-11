@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Receipt printer</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <main>
+    <header>
+      <h1>Receipt printer</h1>
+      <button type="button" id="status" class="status" title="Refresh printer status">…</button>
+    </header>
+
+    <label for="template">Template</label>
+    <select id="template"></select>
+    <p id="description" class="description"></p>
+
+    <form id="form">
+      <div id="fields"></div>
+      <div class="actions">
+        <button type="submit" id="print">Print</button>
+        <button type="button" id="preview" class="secondary">Preview</button>
+      </div>
+    </form>
+
+    <div id="result" hidden></div>
+    <pre id="markup" hidden></pre>
+  </main>
+  <script src="/static/app.js"></script>
+</body>
+</html>

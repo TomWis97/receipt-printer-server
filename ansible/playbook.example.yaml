@@ -1,0 +1,14 @@
+---
+# ansible-playbook -i <inventory> ansible/playbook.example.yaml
+- name: Receipt printer server
+  hosts: receipt_printer
+  become: true
+  roles:
+    - role: receipt_printer_server
+      vars:
+        receipt_printer_server_repo: https://github.com/<you>/receipt-printer-server.git
+        receipt_printer_server_driver_repo: https://github.com/<you>/lib-epson-tm-t88v.git
+        receipt_printer_server_template_settings:
+          shopping-receipt:
+            payee: J. Jansen
+            iban: NL91 ABNA 0417 1643 00

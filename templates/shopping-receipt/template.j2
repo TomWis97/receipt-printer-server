@@ -1,0 +1,22 @@
+{% set total = items | sum(attribute="subtotal") %}
+<center>
+<image src="logo.png" width="160"/>
+<big><b>{{ shop }}</b></big>
+{{ now().strftime("%d-%m-%Y %H:%M") }}
+</center>
+<rule/>
+{% for item in items %}
+<row><cell>{{ item.amount }} x {{ item.description }}</cell><cell>{{ money(item.subtotal) }}</cell></row>
+{% endfor %}
+<rule/>
+<tall><b><row><cell>TOTAL</cell><cell>{{ settings.currency }} {{ money(total) }}</cell></row></b></tall>
+<rule char="="/>
+{% if settings.iban and total > 0 %}
+
+<center>
+Scan to pay {{ settings.currency }} {{ money(total) }} to
+{{ settings.payee }}
+<qr module="6">{{ epc_qr(settings.payee, settings.iban, total, reference, settings.bic) }}</qr>
+</center>
+{% endif %}
+<cut/>
