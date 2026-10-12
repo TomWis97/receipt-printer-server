@@ -258,7 +258,7 @@ and the paper holds 512. To centre text of n Font A characters, put it at
 
 | Tag | |
 |---|---|
-| `<row><cell>Espresso</cell><cell>2,50</cell></row>` | columns across the line. The last cell is right-aligned, the first takes the remaining width. `widths="20,10,12"` sets them. Text too long for its column wraps. |
+| `<row><cell>Espresso</cell><cell>2,50</cell></row>` | columns across the line. The last cell is right-aligned, the first takes the remaining width. `widths="20,10,12"` sets them. Text too long for its column wraps. `<cell align="center">` (or `left`, `right`) aligns one cell and keeps its padding, so `<invert><row><cell align="center">Title</cell></row></invert>` is a centred bar across the paper. |
 | `<rule/>`, `<rule char="="/>` | a line across the paper in the current font and width |
 | `<feed lines="2"/>`, `<feed dots="30"/>` | blank space |
 | `<cut/>`, `<cut mode="full" feed="5"/>` | feed past the cutter and cut. On this unit partial and full cuts are the same. |

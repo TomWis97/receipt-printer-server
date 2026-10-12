@@ -173,6 +173,7 @@ IMAGE_ATTRIBUTES = {
 }
 
 ROW_ATTRIBUTES = {"widths": ("widths", integer_list)}
+CELL_ATTRIBUTES = {"align": ALIGN}
 RULE_ATTRIBUTES = {"char": ("char", text)}
 FEED_ATTRIBUTES = {"lines": ("lines", integer), "dots": ("dots", integer)}
 CUT_ATTRIBUTES = {"mode": ("mode", choice(CutMode)), "feed": ("feed", integer)}
@@ -400,16 +401,17 @@ class Renderer:
         if (element.text or "").strip():
             raise MarkupError("text must be inside <cell>")
         cells = []
+        aligns = []
         for child in element:
             if child.tag != "cell":
                 raise MarkupError("may only contain <cell> elements")
             if (child.tail or "").strip():
                 raise MarkupError("text must be inside <cell>")
-            attributes(child, {})
+            aligns.append(attributes(child, CELL_ATTRIBUTES).get("align"))
             no_children(child)
             cells.append((child.text or "").strip())
         self.new_line()
-        self.write(layout_row(cells, widths, self.chars_per_line()))
+        self.write(layout_row(cells, widths, self.chars_per_line(), aligns))
 
     def rule(self, element):
         empty(element)
@@ -509,11 +511,21 @@ class Renderer:
         self.printer.at(options["x"], options.get("y"))
 
 
-def layout_row(cells, widths, line_width):
+JUSTIFY = {
+    Justification.LEFT: str.ljust,
+    Justification.CENTER: str.center,
+    Justification.RIGHT: str.rjust,
+}
+
+
+def layout_row(cells, widths, line_width, aligns=None):
     """Lay cells out as columns; the last one is right-aligned.
 
     Without widths the first cell gets whatever the others leave. Text too
     long for its column wraps onto extra lines instead of being cut off.
+    aligns holds a Justification or None per cell; None keeps the default.
+    Trailing spaces are dropped, except the padding of a cell given an
+    alignment, so an inverted centred cell stays black to its edge.
     """
     if not cells:
         raise MarkupError("needs at least one <cell>")
@@ -528,13 +540,28 @@ def layout_row(cells, widths, line_width):
         raise MarkupError(
             "widths add up to %d, but a line holds %d characters" % (sum(widths), line_width)
         )
+    if aligns is None:
+        aligns = [None] * len(cells)
+    if len(aligns) != len(cells):
+        raise MarkupError("aligns needs one value per cell")
+    # Everything up to the end of the last explicitly aligned cell is kept.
+    keep = max(
+        (sum(widths[: index + 1]) for index, align in enumerate(aligns) if align is not None),
+        default=0,
+    )
+    aligns = [
+        align if align is not None
+        else Justification.RIGHT if index == len(cells) - 1
+        else Justification.LEFT
+        for index, align in enumerate(aligns)
+    ]
     columns = [textwrap.wrap(cell, width) or [""] for cell, width in zip(cells, widths)]
     lines = []
     for number in range(max(len(column) for column in columns)):
         parts = []
-        for index, (column, width) in enumerate(zip(columns, widths)):
+        for column, width, align in zip(columns, widths, aligns):
             part = column[number] if number < len(column) else ""
-            last = index == len(columns) - 1
-            parts.append(part.rjust(width) if last else part.ljust(width))
-        lines.append("".join(parts).rstrip() + "\n")
+            parts.append(JUSTIFY[align](part, width))
+        line = "".join(parts)
+        lines.append(line[:keep] + line[keep:].rstrip() + "\n")
     return "".join(lines)

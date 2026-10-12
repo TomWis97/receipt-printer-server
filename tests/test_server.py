@@ -9,7 +9,7 @@ from decimal import Decimal
 import pytest
 from PIL import Image
 
-from epson_tm_t88v import BufferTransport, CharacterSet, Printer, commands
+from epson_tm_t88v import BufferTransport, CharacterSet, Justification, Printer, commands
 
 from receipt_printer_server.charsets import printable, split_by_table
 from receipt_printer_server.config import ConfigError, check_config
@@ -147,6 +147,18 @@ def test_row_layout_right_aligns_last_cell_and_wraps():
     assert layout_row(["a", "b", "c"], [5, 5, 5], 15) == "a    b        c\n"
     with pytest.raises(MarkupError):
         layout_row(["a", "b"], [10, 10], 15)
+
+
+def test_row_cell_align_keeps_padding_to_the_cell_edge():
+    center, left = Justification.CENTER, Justification.LEFT
+    assert layout_row(["Title"], None, 11, [center]) == "   Title   \n"
+    assert layout_row(["a", "b"], [4, 4], 10, [None, left]) == "a   b   \n"
+    assert layout_row(["a", "b"], [4, 4], 10, [left, None]) == "a      b\n"
+    assert b" " * 18 + b"Title" + b" " * 19 + b"\n" in render(
+        '<row><cell align="center">Title</cell></row>'
+    )
+    with pytest.raises(MarkupError):
+        render('<row><cell align="middle">Title</cell></row>')
 
 
 def test_image_from_template_dir_and_data_url():
