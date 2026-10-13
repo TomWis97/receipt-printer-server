@@ -318,7 +318,7 @@ into a virtualenv at `/opt/receipt-printer-server/venv`, writes
 | `receipt_printer_server_templates_src` | empty: use the example templates of the checkout. Set it to a directory on the controller to deploy your own templates instead; see below. |
 | `receipt_printer_server_templates_dir` | `/etc/receipt-printer-server/templates` when `…_templates_src` is set, otherwise the `templates/` directory of the checkout |
 | `receipt_printer_server_template_settings` | `{}` |
-| `receipt_printer_server_host`, `…_port` | `0.0.0.0`, `8080` |
+| `receipt_printer_server_host`, `…_port` | `0.0.0.0`, `80`. Below 1024 the unit grants the service `CAP_NET_BIND_SERVICE` and nothing else. |
 | `receipt_printer_server_printer_device`, `…_paper`, `…_dry_run` | `/dev/usb/lp0`, `80mm`, `false` |
 | `receipt_printer_server_user`, `…_install_dir`, `…_config_dir` | `receipt-printer`, `/opt/receipt-printer-server`, `/etc/receipt-printer-server` |
 | `receipt_printer_server_packages` | `[git-core, python3, rsync]`, the EL names. Debian would need `git` and `python3-venv`. |

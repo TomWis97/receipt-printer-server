@@ -22,7 +22,8 @@ receipt_printer_server_install_dir: /opt/receipt-printer-server
 receipt_printer_server_config_dir: /etc/receipt-printer-server
 
 receipt_printer_server_host: 0.0.0.0
-receipt_printer_server_port: 8080
+# Below 1024, the unit grants the service CAP_NET_BIND_SERVICE for it.
+receipt_printer_server_port: 80
 
 # A directory of templates on the controller, mirrored to the target, removed
 # templates included. Empty uses the example templates of the server repository.

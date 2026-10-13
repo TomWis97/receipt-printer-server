@@ -11,6 +11,11 @@ SupplementaryGroups=lp
 ExecStart={{ receipt_printer_server_install_dir }}/venv/bin/receipt-printer-server --config {{ receipt_printer_server_config_dir }}/config.yaml
 Restart=on-failure
 RestartSec=5
+{% if receipt_printer_server_port | int < 1024 %}
+# Only root may listen on a port below 1024; this lets the service do it.
+AmbientCapabilities=CAP_NET_BIND_SERVICE
+CapabilityBoundingSet=CAP_NET_BIND_SERVICE
+{% endif %}
 
 NoNewPrivileges=yes
 ProtectSystem=full
