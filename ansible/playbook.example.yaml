@@ -6,6 +6,9 @@
   roles:
     - role: receipt_printer_server
       vars:
+        # Your own templates, kept per host next to host_vars. Not under
+        # host_vars itself: Ansible would load every template.yaml as variables.
+        receipt_printer_server_templates_src: "{{ playbook_dir }}/host_files/{{ inventory_hostname }}/receipt-templates"
         receipt_printer_server_template_settings:
           shopping-receipt:
             payee: J. Jansen

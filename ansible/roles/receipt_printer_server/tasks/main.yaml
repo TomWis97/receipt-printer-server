@@ -55,6 +55,32 @@
     group: "{{ receipt_printer_server_user }}"
     mode: "0750"
 
+- name: Check that the templates source is a directory
+  ansible.builtin.assert:
+    that: receipt_printer_server_templates_src is directory
+    fail_msg: >-
+      receipt_printer_server_templates_src is {{ receipt_printer_server_templates_src }},
+      which is not a directory on the controller
+    quiet: true
+  when: receipt_printer_server_templates_src | length > 0
+
+# Before the configuration, whose validate: loads the templates.
+- name: Copy the templates
+  ansible.posix.synchronize:
+    # The trailing slash copies the directory's contents, not the directory.
+    src: "{{ receipt_printer_server_templates_src }}/"
+    dest: "{{ receipt_printer_server_templates_dir }}"
+    # Templates removed on the controller disappear from the target too.
+    delete: true
+    checksum: true
+    rsync_opts:
+      # Readable by the service, but helpers.py is code: not writable by it.
+      - "--chown=root:{{ receipt_printer_server_user }}"
+      - "--chmod=D0750,F0640"
+  when: receipt_printer_server_templates_src | length > 0
+  # No restart: the server reloads a template as soon as its files change.
+  notify: Check the templates
+
 - name: Write the configuration
   ansible.builtin.template:
     src: config.yaml.j2

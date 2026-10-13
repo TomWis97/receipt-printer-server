@@ -315,12 +315,13 @@ into a virtualenv at `/opt/receipt-printer-server/venv`, writes
 | `receipt_printer_server_repo` | `https://github.com/TomWis97/receipt-printer-server.git` |
 | `receipt_printer_server_driver_repo` | `https://github.com/TomWis97/lib-epson-tm-t88v.git` |
 | `receipt_printer_server_version`, `…_driver_version` | `main` |
-| `receipt_printer_server_templates_dir` | the `templates/` directory of the checkout |
+| `receipt_printer_server_templates_src` | empty: use the example templates of the checkout. Set it to a directory on the controller to deploy your own templates instead; see below. |
+| `receipt_printer_server_templates_dir` | `/etc/receipt-printer-server/templates` when `…_templates_src` is set, otherwise the `templates/` directory of the checkout |
 | `receipt_printer_server_template_settings` | `{}` |
 | `receipt_printer_server_host`, `…_port` | `0.0.0.0`, `8080` |
 | `receipt_printer_server_printer_device`, `…_paper`, `…_dry_run` | `/dev/usb/lp0`, `80mm`, `false` |
 | `receipt_printer_server_user`, `…_install_dir`, `…_config_dir` | `receipt-printer`, `/opt/receipt-printer-server`, `/etc/receipt-printer-server` |
-| `receipt_printer_server_packages` | `[git-core, python3]`, the EL names. Debian would need `git` and `python3-venv`. |
+| `receipt_printer_server_packages` | `[git-core, python3, rsync]`, the EL names. Debian would need `git` and `python3-venv`. |
 | `receipt_printer_server_firewalld` | `true`: open the port in firewalld |
 | `receipt_printer_server_firewalld_zone` | unset: the default zone |
 
@@ -328,6 +329,30 @@ A new commit in either repository reinstalls the package and restarts the
 service. The configuration is written only if `--check` accepts it, and after
 a new commit of this repository a handler runs `--check` before the restart,
 so a broken template stops the play.
+
+**Your own templates.** Templates often hold things that do not belong in a
+public repository. Keep them anywhere on the controller and point
+`receipt_printer_server_templates_src` at the directory, for example per host
+next to `host_vars`:
+
+```
+host_vars/printer-pi.yaml        receipt_printer_server_templates_src: "{{ playbook_dir }}/host_files/{{ inventory_hostname }}/receipt-templates"
+host_files/printer-pi/receipt-templates/
+└── shopping-receipt/            template.yaml, template.j2, logo.png, ...
+```
+
+Not *inside* `host_vars/printer-pi/`: Ansible loads every `.yaml`, `.yml`,
+`.json` and extensionless file below it as variables, so each `template.yaml`
+would turn into host variables named `title`, `fields` and `settings`.
+
+The role mirrors the directory to `/etc/receipt-printer-server/templates` with
+`ansible.posix.synchronize`, so rsync is needed on the controller as well as on
+the target. A template removed on the controller is removed on the target. The
+files belong to root, readable by the service's group but not writable: a
+template's `helpers.py` is code the service runs. The server picks up a changed
+template on the next request without a restart; a handler runs `--check`
+afterwards, so a broken one still stops the play. Switching back to the example
+templates leaves the old copy in `/etc/receipt-printer-server/templates`.
 
 The role uses `command` once, for that handler: no module runs a program's own
 validation, and the `validate:` option only applies when the configuration
