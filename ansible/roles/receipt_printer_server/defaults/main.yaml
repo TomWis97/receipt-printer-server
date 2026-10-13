@@ -6,11 +6,13 @@ receipt_printer_server_driver_repo: https://github.com/TomWis97/lib-epson-tm-t88
 receipt_printer_server_version: main
 receipt_printer_server_driver_version: main
 
-# git and a Python 3 with venv, and rsync for receipt_printer_server_templates_src.
-# These are the AlmaLinux / EL names; Debian would need git and python3-venv.
+# git and a Python 3 with venv, packaging for Ansible's pip module, and rsync
+# for receipt_printer_server_templates_src. These are the AlmaLinux / EL names;
+# Debian would need git and python3-venv.
 receipt_printer_server_packages:
   - git-core
   - python3
+  - python3-packaging
   - rsync
 
 # Open receipt_printer_server_port in firewalld. Set

@@ -321,7 +321,7 @@ into a virtualenv at `/opt/receipt-printer-server/venv`, writes
 | `receipt_printer_server_host`, `…_port` | `0.0.0.0`, `80`. Below 1024 the unit grants the service `CAP_NET_BIND_SERVICE` and nothing else. |
 | `receipt_printer_server_printer_device`, `…_paper`, `…_dry_run` | `/dev/usb/lp0`, `80mm`, `false` |
 | `receipt_printer_server_user`, `…_install_dir`, `…_config_dir` | `receipt-printer`, `/opt/receipt-printer-server`, `/etc/receipt-printer-server` |
-| `receipt_printer_server_packages` | `[git-core, python3, rsync]`, the EL names. Debian would need `git` and `python3-venv`. |
+| `receipt_printer_server_packages` | `[git-core, python3, python3-packaging, rsync]`, the EL names; `python3-packaging` is for Ansible's `pip` module. Debian would need `git` and `python3-venv`. |
 | `receipt_printer_server_firewalld` | `true`: open the port in firewalld |
 | `receipt_printer_server_firewalld_zone` | unset: the default zone |
 
